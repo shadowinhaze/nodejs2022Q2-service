@@ -10,10 +10,10 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ResCode } from './schemas/constants';
+import { EntityID } from 'src/common/types/entity-id';
+import { ResCode } from '../common/constants/constants';
 import {
   CreateUserDto,
-  FindUserById,
   OuterUser,
   UpdatePasswordDto,
 } from './schemas/user.dto';
@@ -30,7 +30,7 @@ export class UsersController {
 
   @Get(':id')
   @UsePipes(new ValidationPipe())
-  getUserById(@Param() { id }: FindUserById): OuterUser {
+  getUserById(@Param() { id }: EntityID): OuterUser {
     return this.service.getUserById(id);
   }
 
@@ -43,7 +43,7 @@ export class UsersController {
   @Put(':id')
   @UsePipes(new ValidationPipe())
   updateUserPassword(
-    @Param() { id }: FindUserById,
+    @Param() { id }: EntityID,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ): OuterUser {
     return this.service.updateUserPassword(id, updatePasswordDto);
@@ -52,7 +52,7 @@ export class UsersController {
   @Delete(':id')
   @HttpCode(ResCode.deletedSuccess)
   @UsePipes(new ValidationPipe())
-  async deleteUser(@Param() { id }: FindUserById): Promise<void> {
+  async deleteUser(@Param() { id }: EntityID): Promise<void> {
     await this.service.deleteUser(id);
   }
 }

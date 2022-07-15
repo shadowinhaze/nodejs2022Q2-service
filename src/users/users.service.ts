@@ -1,5 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { ResCode, ResMsg } from './schemas/constants';
+import { ResCode, UserResMsg } from '../common/constants/constants';
 import {
   CreateUserDto,
   OuterUser,
@@ -16,7 +16,7 @@ export class UsersService {
     return this.userDB.map((user) => this.getUserWithOutPass(user));
   }
 
-  getUserById(id: string): OuterUser | undefined {
+  getUserById(id: string): OuterUser {
     const user = this.getUserFromDB(id);
 
     return this.getUserWithOutPass(user);
@@ -36,7 +36,7 @@ export class UsersService {
     const user = this.getUserFromDB(id);
 
     if (user.password !== oldPassword)
-      throw new HttpException(ResMsg.oldPassWrong, ResCode.oldPassWrong);
+      throw new HttpException(UserResMsg.oldPassWrong, ResCode.oldPassWrong);
 
     user.password = newPassword;
     user.version += 1;
@@ -53,7 +53,7 @@ export class UsersService {
 
   private getUserFromDB(id: string): User {
     const user = this.userDB.find((user) => user.id === id);
-    if (!user) throw new HttpException(ResMsg.notFound, ResCode.notFound);
+    if (!user) throw new HttpException(UserResMsg.notFound, ResCode.notFound);
 
     return user;
   }

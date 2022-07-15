@@ -44,8 +44,3 @@ export class UpdatePasswordDto {
 
 // ==== Helpers classes ====
 export class OuterUser extends OmitType(User, ['password'] as const) {}
-
-export class FindUserById {
-  @IsUUID('4', { message: `Provided user's ID isn't valid` })
-  id: string;
-}
