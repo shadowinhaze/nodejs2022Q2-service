@@ -13,10 +13,7 @@ export class UsersService {
   private userDB = USERS;
 
   getUsers(): OuterUser[] {
-    return this.userDB.map((user) => {
-      const { password, ...hiddenUser } = user;
-      return hiddenUser;
-    });
+    return this.userDB.map((user) => this.getUserWithOutPass(user));
   }
 
   getUserById(id: string): OuterUser | undefined {
@@ -29,9 +26,7 @@ export class UsersService {
     const newUser = new User(login, pass);
     this.userDB.push(newUser);
 
-    const { password, ...hiddenUser } = newUser;
-
-    return hiddenUser;
+    return this.getUserWithOutPass(newUser);
   }
 
   updateUserPassword(
@@ -63,6 +58,7 @@ export class UsersService {
     return user;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private getUserWithOutPass({ password, ...hiddenUser }: User) {
     return hiddenUser;
   }
