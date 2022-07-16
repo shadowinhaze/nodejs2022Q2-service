@@ -2,6 +2,7 @@ export enum ApiPath {
   users = 'user',
   tracks = 'track',
   artists = 'artist',
+  albums = 'album',
 }
 
 export enum ResCode {

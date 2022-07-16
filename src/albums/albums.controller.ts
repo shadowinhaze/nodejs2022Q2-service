@@ -10,12 +10,12 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ResCode } from 'src/common/constants/constants';
+import { ApiPath, ResCode } from 'src/common/constants/constants';
 import { EntityID } from 'src/common/types/entity-id';
 import { AlbumsService } from './albums.service';
 import { Album, CreateAlbumDto, UpdateAlbumDto } from './schemas/albums.dto';
 
-@Controller('albums')
+@Controller(ApiPath.albums)
 export class AlbumsController {
   constructor(private readonly service: AlbumsService) {}
 
