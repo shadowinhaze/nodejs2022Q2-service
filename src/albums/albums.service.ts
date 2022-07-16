@@ -11,7 +11,7 @@ export class AlbumsService {
     return this.albumsDB;
   }
 
-  getAlbumById(id: string): Album {
+  getItemById(id: string): Album {
     return this.getAlbumFromDB(id);
   }
 

@@ -31,7 +31,7 @@ export class ArtistsController {
   @Get(':id')
   @UsePipes(new ValidationPipe())
   getArtistById(@Param() { id }: EntityID): Artist {
-    return this.service.getArtistById(id);
+    return this.service.getItemById(id);
   }
 
   @Post()

@@ -27,7 +27,7 @@ export class AlbumsController {
   @Get(':id')
   @UsePipes(new ValidationPipe())
   getAlbumById(@Param() { id }: EntityID): Album {
-    return this.service.getAlbumById(id);
+    return this.service.getItemById(id);
   }
 
   @Post()

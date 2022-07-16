@@ -15,7 +15,7 @@ export class ArtistsService {
     return this.artistsDB;
   }
 
-  getArtistById(id: string): Artist {
+  getItemById(id: string): Artist {
     return this.getArtistFromDB(id);
   }
 

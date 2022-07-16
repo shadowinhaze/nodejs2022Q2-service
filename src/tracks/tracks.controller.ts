@@ -20,14 +20,14 @@ export class TracksController {
   constructor(private readonly service: TracksService) {}
 
   @Get()
-  getUsers(): Track[] {
+  getTrack(): Track[] {
     return this.service.getTracks();
   }
 
   @Get(':id')
   @UsePipes(new ValidationPipe())
-  getUserById(@Param() { id }: EntityID): Track {
-    return this.service.getTrackById(id);
+  getTrackById(@Param() { id }: EntityID): Track {
+    return this.service.getItemById(id);
   }
 
   @Post()
@@ -38,7 +38,7 @@ export class TracksController {
 
   @Put(':id')
   @UsePipes(new ValidationPipe())
-  updateUserPassword(
+  updateTrack(
     @Param() { id }: EntityID,
     @Body() updateTrackDto: UpdateTrackDto,
   ): Track {
@@ -48,7 +48,7 @@ export class TracksController {
   @Delete(':id')
   @HttpCode(ResCode.deletedSuccess)
   @UsePipes(new ValidationPipe())
-  async deleteUser(@Param() { id }: EntityID): Promise<void> {
+  async deleteTrack(@Param() { id }: EntityID): Promise<void> {
     await this.service.deleteTrack(id);
   }
 }

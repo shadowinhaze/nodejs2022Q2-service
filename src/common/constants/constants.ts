@@ -3,12 +3,14 @@ export enum ApiPath {
   tracks = 'track',
   artists = 'artist',
   albums = 'album',
+  favorites = 'favs',
 }
 
 export enum ResCode {
   notFound = 404,
   oldPassWrong = 403,
   deletedSuccess = 204,
+  notFoundForFavs = 422,
 }
 
 export enum UserResMsg {
@@ -26,4 +28,9 @@ export enum ArtistResMsg {
 
 export enum AlbumResMsg {
   notFound = 'Album with provided ID does not exist',
+}
+
+export enum FavsResMsg {
+  notFound = 'with provided ID does not exist in collection',
+  notFavoriteEntity = "with provided ID isn't favorite",
 }

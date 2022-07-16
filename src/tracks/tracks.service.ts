@@ -11,7 +11,7 @@ export class TracksService {
     return this.tracksDB;
   }
 
-  getTrackById(id: string): Track {
+  getItemById(id: string): Track {
     return this.getTrackFromDB(id);
   }
 
