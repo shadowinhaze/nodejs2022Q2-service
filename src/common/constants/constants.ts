@@ -22,3 +22,7 @@ export enum TrackResMsg {
 export enum ArtistResMsg {
   notFound = 'Artist with provided ID does not exist',
 }
+
+export enum AlbumResMsg {
+  notFound = 'Album with provided ID does not exist',
+}

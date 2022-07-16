@@ -24,25 +24,25 @@ export class ArtistsController {
   constructor(private readonly service: ArtistsService) {}
 
   @Get()
-  getUsers(): Artist[] {
+  getArtists(): Artist[] {
     return this.service.getArtists();
   }
 
   @Get(':id')
   @UsePipes(new ValidationPipe())
-  getUserById(@Param() { id }: EntityID): Artist {
+  getArtistById(@Param() { id }: EntityID): Artist {
     return this.service.getArtistById(id);
   }
 
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  create(@Body() createArtistDto: CreateArtistDto): Artist {
+  createArtist(@Body() createArtistDto: CreateArtistDto): Artist {
     return this.service.addArtist(createArtistDto);
   }
 
   @Put(':id')
   @UsePipes(new ValidationPipe())
-  updateUserPassword(
+  updateArtist(
     @Param() { id }: EntityID,
     @Body() updateArtistDto: UpdateArtistDto,
   ): Artist {
@@ -52,7 +52,7 @@ export class ArtistsController {
   @Delete(':id')
   @HttpCode(ResCode.deletedSuccess)
   @UsePipes(new ValidationPipe())
-  async deleteUser(@Param() { id }: EntityID): Promise<void> {
+  async deleteArtist(@Param() { id }: EntityID): Promise<void> {
     await this.service.deleteArtist(id);
   }
 }
