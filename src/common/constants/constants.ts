@@ -1,3 +1,9 @@
+export enum ApiPath {
+  users = 'user',
+  tracks = 'track',
+  artists = 'artist',
+}
+
 export enum ResCode {
   notFound = 404,
   oldPassWrong = 403,
@@ -11,4 +17,8 @@ export enum UserResMsg {
 
 export enum TrackResMsg {
   notFound = 'Track with provided ID does not exist',
+}
+
+export enum ArtistResMsg {
+  notFound = 'Artist with provided ID does not exist',
 }

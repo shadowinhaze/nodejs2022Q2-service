@@ -11,7 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { EntityID } from 'src/common/types/entity-id';
-import { ResCode } from '../common/constants/constants';
+import { ApiPath, ResCode } from '../common/constants/constants';
 import {
   CreateUserDto,
   OuterUser,
@@ -19,7 +19,7 @@ import {
 } from './schemas/user.dto';
 import { UsersService } from './users.service';
 
-@Controller('user')
+@Controller(ApiPath.users)
 export class UsersController {
   constructor(private readonly service: UsersService) {}
 

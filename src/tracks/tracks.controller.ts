@@ -10,12 +10,12 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ResCode } from 'src/common/constants/constants';
+import { ApiPath, ResCode } from 'src/common/constants/constants';
 import { EntityID } from 'src/common/types/entity-id';
 import { CreateTrackDto, Track, UpdateTrackDto } from './schemas/tracks.dto';
 import { TracksService } from './tracks.service';
 
-@Controller('track')
+@Controller(ApiPath.tracks)
 export class TracksController {
   constructor(private readonly service: TracksService) {}
 
