@@ -1,16 +1,16 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { ResCode, UserResMsg } from '../common/constants/constants';
+import { UsersDB } from 'src/temp-db';
+import { ResCode, UserResMsg } from '../shared/constants/constants';
 import {
   CreateUserDto,
   OuterUser,
   UpdatePasswordDto,
   User,
 } from './schemas/user.dto';
-import { USERS } from './temp-db/user-temp-db';
 
 @Injectable()
 export class UsersService {
-  private userDB = USERS;
+  private userDB = UsersDB;
 
   getUsers(): OuterUser[] {
     return this.userDB.map((user) => this.getUserWithOutPass(user));

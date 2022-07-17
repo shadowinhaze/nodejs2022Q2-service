@@ -10,8 +10,8 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiPath, ResCode } from 'src/common/constants/constants';
-import { EntityID } from 'src/common/types/entity-id';
+import { ApiPath, ResCode } from 'src/shared/constants/constants';
+import { EntityID } from 'src/shared/types/entity-id';
 import { ArtistsService } from './artists.service';
 import {
   Artist,

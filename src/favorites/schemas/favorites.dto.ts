@@ -7,18 +7,13 @@ import {
 } from 'class-validator';
 import { Album } from 'src/albums/schemas/albums.dto';
 import { Artist } from 'src/artists/schemas/artists.dto';
+import { Entity } from 'src/temp-db';
 import { Track } from 'src/tracks/schemas/tracks.dto';
 
-export enum FavoritesEntity {
-  artist = 'artists',
-  album = 'albums',
-  track = 'tracks',
-}
-
 export class Favorites {
-  [FavoritesEntity.artist]: string[];
-  [FavoritesEntity.album]: string[];
-  [FavoritesEntity.track]: string[];
+  [Entity.artists]: string[];
+  [Entity.albums]: string[];
+  [Entity.tracks]: string[];
 }
 
 // ==== DTO ====

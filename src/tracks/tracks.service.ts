@@ -1,29 +1,30 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { ResCode, TrackResMsg } from 'src/common/constants/constants';
+import { Injectable } from '@nestjs/common';
+import { SharedService } from 'src/shared/shared.service';
+import { Entity } from 'src/temp-db';
 import { CreateTrackDto, Track, UpdateTrackDto } from './schemas/tracks.dto';
-import { TRACKS } from './temp-db/tracks-temp-db';
 
 @Injectable()
 export class TracksService {
-  private tracksDB = TRACKS;
+  constructor(private readonly sharedService: SharedService) {}
 
   getTracks(): Track[] {
-    return this.tracksDB;
+    return this.sharedService.getCollectionByName(Entity.tracks) as Track[];
   }
 
   getItemById(id: string): Track {
-    return this.getTrackFromDB(id);
+    return this.sharedService.getItemById(Entity.tracks, id);
   }
 
   addTrack(newTrack: CreateTrackDto): Track {
     const track = new Track(newTrack);
-    this.tracksDB.push(track);
+
+    this.sharedService.addItem(Entity.tracks, track);
 
     return track;
   }
 
   updateTrack(id: string, trackInfo: UpdateTrackDto): Track {
-    const track = this.getTrackFromDB(id);
+    const track = this.sharedService.getItemById(Entity.tracks, id);
 
     Object.entries(trackInfo).forEach(([key, value]) => {
       track[key] = value;
@@ -33,15 +34,8 @@ export class TracksService {
   }
 
   async deleteTrack(id: string): Promise<void> {
-    this.getTrackFromDB(id);
+    this.sharedService.deleteItemById(Entity.tracks, id);
 
-    this.tracksDB = this.tracksDB.filter((track) => track.id !== id);
-  }
-
-  private getTrackFromDB(id: string): Track {
-    const track = this.tracksDB.find((track) => track.id === id);
-    if (!track) throw new HttpException(TrackResMsg.notFound, ResCode.notFound);
-
-    return track;
+    this.sharedService.cleanFavoritesAfterItemDeletion(Entity.tracks, id);
   }
 }

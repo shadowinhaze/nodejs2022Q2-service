@@ -10,8 +10,8 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { EntityID } from 'src/common/types/entity-id';
-import { ApiPath, ResCode } from '../common/constants/constants';
+import { EntityID } from 'src/shared/types/entity-id';
+import { ApiPath, ResCode } from '../shared/constants/constants';
 import {
   CreateUserDto,
   OuterUser,
