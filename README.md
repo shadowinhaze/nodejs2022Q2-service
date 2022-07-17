@@ -8,13 +8,19 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/shadowinhaze/nodejs2022Q2-service.git
 ```
 
 ## Installing NPM modules
 
 ```
 npm install
+```
+
+## Rename ENV file
+
+```
+.env.example to .env
 ```
 
 ## Running application
