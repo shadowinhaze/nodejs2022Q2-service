@@ -33,7 +33,6 @@ export class UsersController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  @UsePipes(new ValidationPipe())
   getUserById(@Param() { id }: EntityID): OuterUser {
     return this.service.getUserById(id);
   }
@@ -47,7 +46,6 @@ export class UsersController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
-  @UsePipes(new ValidationPipe())
   updateUserPassword(
     @Param() { id }: EntityID,
     @Body() updatePasswordDto: UpdatePasswordDto,
@@ -57,7 +55,6 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(ResCode.deletedSuccess)
-  @UsePipes(new ValidationPipe())
   async deleteUser(@Param() { id }: EntityID): Promise<void> {
     await this.service.deleteUser(id);
   }

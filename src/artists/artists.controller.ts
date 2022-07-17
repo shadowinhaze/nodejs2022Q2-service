@@ -29,7 +29,6 @@ export class ArtistsController {
   }
 
   @Get(':id')
-  @UsePipes(new ValidationPipe())
   getArtistById(@Param() { id }: EntityID): Artist {
     return this.service.getItemById(id);
   }
@@ -41,7 +40,6 @@ export class ArtistsController {
   }
 
   @Put(':id')
-  @UsePipes(new ValidationPipe())
   updateArtist(
     @Param() { id }: EntityID,
     @Body() updateArtistDto: UpdateArtistDto,
@@ -51,7 +49,6 @@ export class ArtistsController {
 
   @Delete(':id')
   @HttpCode(ResCode.deletedSuccess)
-  @UsePipes(new ValidationPipe())
   async deleteArtist(@Param() { id }: EntityID): Promise<void> {
     await this.service.deleteArtist(id);
   }

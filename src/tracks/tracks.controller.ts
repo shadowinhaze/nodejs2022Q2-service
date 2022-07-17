@@ -25,7 +25,6 @@ export class TracksController {
   }
 
   @Get(':id')
-  @UsePipes(new ValidationPipe())
   getTrackById(@Param() { id }: EntityID): Track {
     return this.service.getItemById(id);
   }
@@ -37,7 +36,6 @@ export class TracksController {
   }
 
   @Put(':id')
-  @UsePipes(new ValidationPipe())
   updateTrack(
     @Param() { id }: EntityID,
     @Body() updateTrackDto: UpdateTrackDto,
@@ -47,7 +45,6 @@ export class TracksController {
 
   @Delete(':id')
   @HttpCode(ResCode.deletedSuccess)
-  @UsePipes(new ValidationPipe())
   async deleteTrack(@Param() { id }: EntityID): Promise<void> {
     await this.service.deleteTrack(id);
   }

@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Param,
-  Post,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, Param, Post } from '@nestjs/common';
 import { ApiPath, ResCode } from 'src/shared/constants/constants';
 import { FavsEntity } from 'src/shared/types/entity-id';
 import { Entity } from 'src/temp-db';
@@ -24,7 +15,6 @@ export class FavoritesController {
   }
 
   @Post(':entity/:id')
-  @UsePipes(new ValidationPipe())
   @HttpCode(ResCode.createdSuccess)
   addItem(@Param() { entity, id }: FavsEntity): {
     statusCode: number;
@@ -39,7 +29,6 @@ export class FavoritesController {
 
   @Delete(':entity/:id')
   @HttpCode(ResCode.deletedSuccess)
-  @UsePipes(new ValidationPipe())
   async deleteItem(@Param() { entity, id }: FavsEntity): Promise<void> {
     await this.service.deleteItem(Entity[`${entity}s`], id);
   }

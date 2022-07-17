@@ -25,7 +25,6 @@ export class AlbumsController {
   }
 
   @Get(':id')
-  @UsePipes(new ValidationPipe())
   getAlbumById(@Param() { id }: EntityID): Album {
     return this.service.getItemById(id);
   }
@@ -37,7 +36,6 @@ export class AlbumsController {
   }
 
   @Put(':id')
-  @UsePipes(new ValidationPipe())
   updateAlbumPassword(
     @Param() { id }: EntityID,
     @Body() updateAlbumDto: UpdateAlbumDto,
@@ -47,7 +45,6 @@ export class AlbumsController {
 
   @Delete(':id')
   @HttpCode(ResCode.deletedSuccess)
-  @UsePipes(new ValidationPipe())
   async deleteAlbum(@Param() { id }: EntityID): Promise<void> {
     await this.service.deleteAlbum(id);
   }
