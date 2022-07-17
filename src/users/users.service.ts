@@ -13,20 +13,18 @@ export class UsersService {
   private userDB = UsersDB;
 
   getUsers(): OuterUser[] {
-    return this.userDB.map((user) => this.getUserWithOutPass(user));
+    return this.userDB;
   }
 
   getUserById(id: string): OuterUser {
-    const user = this.getUserFromDB(id);
-
-    return this.getUserWithOutPass(user);
+    return this.getUserFromDB(id);
   }
 
   addUser({ login, password: pass }: CreateUserDto): OuterUser {
     const newUser = new User(login, pass);
     this.userDB.push(newUser);
 
-    return this.getUserWithOutPass(newUser);
+    return newUser;
   }
 
   updateUserPassword(
@@ -42,7 +40,7 @@ export class UsersService {
     user.version += 1;
     user.updatedAt = Date.now();
 
-    return this.getUserWithOutPass(user);
+    return user;
   }
 
   async deleteUser(id: string): Promise<void> {
@@ -56,10 +54,5 @@ export class UsersService {
     if (!user) throw new HttpException(UserResMsg.notFound, ResCode.notFound);
 
     return user;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private getUserWithOutPass({ password, ...hiddenUser }: User) {
-    return hiddenUser;
   }
 }

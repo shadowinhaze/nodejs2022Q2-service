@@ -1,4 +1,5 @@
 import { OmitType } from '@nestjs/mapped-types';
+import { Exclude } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { randomUUID } from 'crypto';
 
@@ -6,7 +7,10 @@ import { randomUUID } from 'crypto';
 export class User {
   id: string;
   login: string;
+
+  @Exclude()
   password: string;
+
   version: number;
   createdAt: number;
   updatedAt: number;

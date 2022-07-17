@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -7,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -23,23 +25,27 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly service: UsersService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   getUsers(): OuterUser[] {
     return this.service.getUsers();
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   @UsePipes(new ValidationPipe())
   getUserById(@Param() { id }: EntityID): OuterUser {
     return this.service.getUserById(id);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
   create(@Body() createUserDto: CreateUserDto): OuterUser {
     return this.service.addUser(createUserDto);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
   @UsePipes(new ValidationPipe())
   updateUserPassword(
