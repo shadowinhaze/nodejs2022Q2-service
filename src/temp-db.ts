@@ -2,9 +2,7 @@ import { Album } from './albums/schemas/albums.dto';
 import { Artist } from './artists/schemas/artists.dto';
 import { Favorites } from './favorites/schemas/favorites.dto';
 import { Track } from './tracks/schemas/tracks.dto';
-import { User } from './users/schemas/user.dto';
 
-const nullUser = new User('testlogin', '12345678');
 const nullTrack = new Track({ name: 'testTrack', duration: 123 });
 const nullArtist = new Artist('Dua Lipa', true);
 const nullAlbum = new Album({ name: 'TestAlbum', year: 1994 });
@@ -34,5 +32,3 @@ export const FavoritesDB: Favorites = {
   [Entity.albums]: [],
   [Entity.tracks]: [],
 };
-
-export const UsersDB: User[] = [nullUser];
