@@ -5,7 +5,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { Album } from 'src/albums/schemas/albums.dto';
+import { Album } from 'src/albums/album.entity';
 import { Artist } from 'src/artists/schemas/artists.dto';
 import { Entity } from 'src/temp-db';
 import { Track } from 'src/tracks/track.entity';

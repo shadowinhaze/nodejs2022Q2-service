@@ -1,5 +1,5 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
-import { Album } from 'src/albums/schemas/albums.dto';
+import { Album } from 'src/albums/album.entity';
 import { Artist } from 'src/artists/schemas/artists.dto';
 import { ResCode, ResMsg } from 'src/shared/constants/constants';
 import { Entity, FavoritesDB, TempDB } from 'src/temp-db';

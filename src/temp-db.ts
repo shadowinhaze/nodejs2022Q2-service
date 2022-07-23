@@ -1,10 +1,9 @@
-import { Album } from './albums/schemas/albums.dto';
+import { Album } from './albums/album.entity';
 import { Artist } from './artists/schemas/artists.dto';
 import { Favorites } from './favorites/schemas/favorites.dto';
 import { Track } from './tracks/track.entity';
 
 const nullArtist = new Artist('Dua Lipa', true);
-const nullAlbum = new Album({ name: 'TestAlbum', year: 1994 });
 
 export enum Entity {
   artists = 'artists',
@@ -22,7 +21,7 @@ interface ITempDB {
 
 export const TempDB: ITempDB = {
   [Entity.tracks]: [],
-  [Entity.albums]: [nullAlbum],
+  [Entity.albums]: [],
   [Entity.artists]: [nullArtist],
 };
 

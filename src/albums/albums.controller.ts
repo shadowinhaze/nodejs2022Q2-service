@@ -12,40 +12,41 @@ import {
 } from '@nestjs/common';
 import { ApiPath, ResCode } from 'src/shared/constants/constants';
 import { EntityID } from 'src/shared/types/entity-id';
+import { Album } from './album.entity';
 import { AlbumsService } from './albums.service';
-import { Album, CreateAlbumDto, UpdateAlbumDto } from './schemas/albums.dto';
+import { CreateAlbumDto, UpdateAlbumDto } from './albums.dto';
 
 @Controller(ApiPath.albums)
 export class AlbumsController {
   constructor(private readonly service: AlbumsService) {}
 
   @Get()
-  getAlbums(): Album[] {
-    return this.service.getAlbums();
+  async getAlbums(): Promise<Album[]> {
+    return this.service.findAll();
   }
 
   @Get(':id')
-  getAlbumById(@Param() { id }: EntityID): Album {
-    return this.service.getItemById(id);
+  async getAlbumById(@Param() { id }: EntityID): Promise<Album> {
+    return await this.service.findOne({ id });
   }
 
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  create(@Body() createAlbumDto: CreateAlbumDto): Album {
-    return this.service.addAlbum(createAlbumDto);
+  async create(@Body() createAlbumDto: CreateAlbumDto): Promise<Album> {
+    return await this.service.addItem(createAlbumDto);
   }
 
   @Put(':id')
-  updateAlbumPassword(
+  async updateAlbumPassword(
     @Param() { id }: EntityID,
     @Body() updateAlbumDto: UpdateAlbumDto,
-  ): Album {
-    return this.service.updateAlbum(id, updateAlbumDto);
+  ): Promise<Album> {
+    return await this.service.updateItem({ id }, updateAlbumDto);
   }
 
   @Delete(':id')
   @HttpCode(ResCode.deletedSuccess)
   async deleteAlbum(@Param() { id }: EntityID): Promise<void> {
-    await this.service.deleteAlbum(id);
+    await this.service.deleteItem({ id });
   }
 }
