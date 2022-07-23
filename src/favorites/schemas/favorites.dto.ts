@@ -8,7 +8,7 @@ import {
 import { Album } from 'src/albums/schemas/albums.dto';
 import { Artist } from 'src/artists/schemas/artists.dto';
 import { Entity } from 'src/temp-db';
-import { Track } from 'src/tracks/schemas/tracks.dto';
+import { Track } from 'src/tracks/track.entity';
 
 export class Favorites {
   [Entity.artists]: string[];

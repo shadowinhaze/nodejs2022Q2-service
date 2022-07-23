@@ -3,7 +3,7 @@ import { Album } from 'src/albums/schemas/albums.dto';
 import { Artist } from 'src/artists/schemas/artists.dto';
 import { ResCode, ResMsg } from 'src/shared/constants/constants';
 import { Entity, FavoritesDB, TempDB } from 'src/temp-db';
-import { Track } from 'src/tracks/schemas/tracks.dto';
+import { Track } from 'src/tracks/track.entity';
 import { User } from 'src/users/user.entity';
 
 enum InnerEntity {

@@ -1,9 +1,8 @@
 import { Album } from './albums/schemas/albums.dto';
 import { Artist } from './artists/schemas/artists.dto';
 import { Favorites } from './favorites/schemas/favorites.dto';
-import { Track } from './tracks/schemas/tracks.dto';
+import { Track } from './tracks/track.entity';
 
-const nullTrack = new Track({ name: 'testTrack', duration: 123 });
 const nullArtist = new Artist('Dua Lipa', true);
 const nullAlbum = new Album({ name: 'TestAlbum', year: 1994 });
 
@@ -22,7 +21,7 @@ interface ITempDB {
 }
 
 export const TempDB: ITempDB = {
-  [Entity.tracks]: [nullTrack],
+  [Entity.tracks]: [],
   [Entity.albums]: [nullAlbum],
   [Entity.artists]: [nullArtist],
 };
