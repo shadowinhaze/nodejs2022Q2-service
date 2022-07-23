@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { Album } from 'src/albums/album.entity';
+import { Artist } from 'src/artists/artist.entity';
 import { Track } from 'src/tracks/track.entity';
 import { User } from 'src/users/user.entity';
 import { DataSourceOptions } from 'typeorm';
@@ -11,7 +12,7 @@ const databaseConfig: DataSourceOptions = {
   database: process.env.POSTGRES_DATABASE,
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
-  entities: [User, Track, Album],
+  entities: [User, Track, Album, Artist],
   migrations: [process.env.TYPEORM_MIGRATIONS],
   migrationsRun: false,
   migrationsTableName: process.env.TYPEORM_MIGRATIONS_TABLE_NAME,

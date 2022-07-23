@@ -1,57 +1,32 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { SharedService } from 'src/shared/shared.service';
-import { Entity } from 'src/temp-db';
-import {
-  Artist,
-  CreateArtistDto,
-  UpdateArtistDto,
-} from './schemas/artists.dto';
+import { Inject, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { CollectionItem } from 'src/shared/collection-item';
+import { Artist } from './artist.entity';
+// @Injectable()
+// export class ArtistsService {
+//   // TO DO
+//   async deleteArtist(id: string): Promise<void> {
+//     this.sharedService.deleteItemById(Entity.artists, id);
+
+//     this.sharedService.cleanCollectionsAfterItemDeletion(
+//       Entity.artists,
+//       Entity.albums,
+//       id,
+//     );
+
+//     this.sharedService.cleanCollectionsAfterItemDeletion(
+//       Entity.artists,
+//       Entity.tracks,
+//       id,
+//     );
+//   }
+// }
 
 @Injectable()
-export class ArtistsService {
-  private readonly logger = new Logger(ArtistsService.name);
-
-  constructor(private readonly sharedService: SharedService) {}
-
-  getArtists(): Artist[] {
-    return this.sharedService.getCollectionByName(Entity.artists) as Artist[];
-  }
-
-  getItemById(id: string): Artist {
-    return this.sharedService.getItemById(Entity.artists, id);
-  }
-
-  addArtist({ name, grammy }: CreateArtistDto): Artist {
-    const artist = new Artist(name, grammy);
-
-    this.sharedService.addItem(Entity.artists, artist);
-
-    return artist;
-  }
-
-  updateArtist(id: string, artistInfo: UpdateArtistDto): Artist {
-    const artist = this.sharedService.getItemById(Entity.artists, id);
-
-    Object.entries(artistInfo).forEach(([key, value]) => {
-      artist[key] = value;
-    });
-
-    return artist;
-  }
-
-  async deleteArtist(id: string): Promise<void> {
-    this.sharedService.deleteItemById(Entity.artists, id);
-
-    this.sharedService.cleanCollectionsAfterItemDeletion(
-      Entity.artists,
-      Entity.albums,
-      id,
-    );
-
-    this.sharedService.cleanCollectionsAfterItemDeletion(
-      Entity.artists,
-      Entity.tracks,
-      id,
-    );
+export class ArtistsService extends CollectionItem<Artist> {
+  constructor(
+    @Inject('ARTIST_REPOSITORY') private artistRepository: Repository<Artist>,
+  ) {
+    super(artistRepository);
   }
 }

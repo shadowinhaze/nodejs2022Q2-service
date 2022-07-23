@@ -13,43 +13,42 @@ import {
 import { ApiPath, ResCode } from 'src/shared/constants/constants';
 import { EntityID } from 'src/shared/types/entity-id';
 import { ArtistsService } from './artists.service';
-import {
-  Artist,
-  CreateArtistDto,
-  UpdateArtistDto,
-} from './schemas/artists.dto';
+import { CreateArtistDto, UpdateArtistDto } from './artists.dto';
+import { Artist } from './artist.entity';
 
 @Controller(ApiPath.artists)
 export class ArtistsController {
   constructor(private readonly service: ArtistsService) {}
 
   @Get()
-  getArtists(): Artist[] {
-    return this.service.getArtists();
+  async getArtist(): Promise<Artist[]> {
+    return await this.service.findAll();
   }
 
   @Get(':id')
-  getArtistById(@Param() { id }: EntityID): Artist {
-    return this.service.getItemById(id);
+  async getArtistById(@Param() { id }: EntityID): Promise<Artist> {
+    return await this.service.findOne({ id });
   }
 
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  createArtist(@Body() createArtistDto: CreateArtistDto): Artist {
-    return this.service.addArtist(createArtistDto);
+  async createArtist(
+    @Body() createArtistDto: CreateArtistDto,
+  ): Promise<Artist> {
+    return await this.service.addItem(createArtistDto);
   }
 
   @Put(':id')
-  updateArtist(
+  async updateArtist(
     @Param() { id }: EntityID,
     @Body() updateArtistDto: UpdateArtistDto,
-  ): Artist {
-    return this.service.updateArtist(id, updateArtistDto);
+  ): Promise<Artist> {
+    return await this.service.updateItem({ id }, updateArtistDto);
   }
 
   @Delete(':id')
   @HttpCode(ResCode.deletedSuccess)
   async deleteArtist(@Param() { id }: EntityID): Promise<void> {
-    await this.service.deleteArtist(id);
+    await this.service.deleteItem({ id });
   }
 }

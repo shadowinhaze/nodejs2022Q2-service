@@ -6,7 +6,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { Album } from 'src/albums/album.entity';
-import { Artist } from 'src/artists/schemas/artists.dto';
+import { Artist } from 'src/artists/artist.entity';
 import { Entity } from 'src/temp-db';
 import { Track } from 'src/tracks/track.entity';
 
