@@ -4,7 +4,7 @@ import { Artist } from 'src/artists/schemas/artists.dto';
 import { ResCode, ResMsg } from 'src/shared/constants/constants';
 import { Entity, FavoritesDB, TempDB } from 'src/temp-db';
 import { Track } from 'src/tracks/schemas/tracks.dto';
-import { User } from 'src/users/schemas/user.dto';
+import { User } from 'src/users/user.entity';
 
 enum InnerEntity {
   artists = 'artistId',

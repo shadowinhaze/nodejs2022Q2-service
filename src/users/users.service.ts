@@ -1,58 +1,47 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { UsersDB } from 'src/temp-db';
+import { HttpException, Injectable, Inject } from '@nestjs/common';
 import { ResCode, UserResMsg } from '../shared/constants/constants';
-import {
-  CreateUserDto,
-  OuterUser,
-  UpdatePasswordDto,
-  User,
-} from './schemas/user.dto';
+import { CreateUserDto, UpdatePasswordDto } from './user.dto';
+import { User } from './user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  private userDB = UsersDB;
+  constructor(
+    @Inject('USER_REPOSITORY')
+    private userRepository: Repository<User>,
+  ) {}
 
-  getUsers(): OuterUser[] {
-    return this.userDB;
+  async getUsers(): Promise<User[]> {
+    return this.userRepository.find();
   }
 
-  getUserById(id: string): OuterUser {
-    return this.getUserFromDB(id);
+  async getUserById(id: string): Promise<User> {
+    return this.userRepository.findOneBy({ id });
   }
 
-  addUser({ login, password: pass }: CreateUserDto): OuterUser {
-    const newUser = new User(login, pass);
-    this.userDB.push(newUser);
-
-    return newUser;
+  async addUser(createUserDto: CreateUserDto): Promise<User> {
+    const user = this.userRepository.create(createUserDto);
+    await this.userRepository.save(user);
+    return user;
   }
 
-  updateUserPassword(
+  async updateUserPassword(
     id: string,
     { oldPassword, newPassword }: UpdatePasswordDto,
-  ): OuterUser {
-    const user = this.getUserFromDB(id);
+  ): Promise<User> {
+    const user = await this.userRepository.findOneBy({ id });
 
     if (user.password !== oldPassword)
       throw new HttpException(UserResMsg.oldPassWrong, ResCode.oldPassWrong);
 
-    user.password = newPassword;
-    user.version += 1;
-    user.updatedAt = Date.now();
+    await this.userRepository.update(id, {
+      password: newPassword,
+    });
 
-    return user;
+    return await this.userRepository.findOneBy({ id });
   }
 
   async deleteUser(id: string): Promise<void> {
-    this.getUserFromDB(id);
-
-    this.userDB = this.userDB.filter((user) => user.id !== id);
-  }
-
-  private getUserFromDB(id: string): User {
-    const user = this.userDB.find((user) => user.id === id);
-    if (!user) throw new HttpException(UserResMsg.notFound, ResCode.notFound);
-
-    return user;
+    await this.userRepository.delete({ id });
   }
 }

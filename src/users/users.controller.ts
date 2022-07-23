@@ -14,11 +14,8 @@ import {
 } from '@nestjs/common';
 import { EntityID } from 'src/shared/types/entity-id';
 import { ApiPath, ResCode } from '../shared/constants/constants';
-import {
-  CreateUserDto,
-  OuterUser,
-  UpdatePasswordDto,
-} from './schemas/user.dto';
+import { CreateUserDto, UpdatePasswordDto } from './user.dto';
+import { User } from './user.entity';
 import { UsersService } from './users.service';
 
 @Controller(ApiPath.users)
@@ -27,29 +24,29 @@ export class UsersController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  getUsers(): OuterUser[] {
+  async getUsers(): Promise<User[]> {
     return this.service.getUsers();
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  getUserById(@Param() { id }: EntityID): OuterUser {
+  async getUserById(@Param() { id }: EntityID): Promise<User> {
     return this.service.getUserById(id);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  create(@Body() createUserDto: CreateUserDto): OuterUser {
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.service.addUser(createUserDto);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
-  updateUserPassword(
+  async updateUserPassword(
     @Param() { id }: EntityID,
     @Body() updatePasswordDto: UpdatePasswordDto,
-  ): OuterUser {
+  ): Promise<User> {
     return this.service.updateUserPassword(id, updatePasswordDto);
   }
 
