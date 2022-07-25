@@ -1,30 +1,29 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { Album } from 'src/albums/album.entity';
 import { Artist } from 'src/artists/artist.entity';
+import { dataSource } from 'src/database/data-source';
+import { Favorites } from 'src/favorites/favorites.entity';
 import { ResCode, ResMsg } from 'src/shared/constants/constants';
-import { Entity, FavoritesDB, TempDB } from 'src/temp-db';
+import { Entity } from 'src/temp-db';
 import { Track } from 'src/tracks/track.entity';
-import { User } from 'src/users/user.entity';
 
 enum InnerEntity {
   artists = 'artistId',
   albums = 'albumId',
 }
 
-type ItemPayload = Artist | Album | Track | User;
+const EntityMap = {
+  [Entity.tracks]: Track,
+  [Entity.albums]: Album,
+  [Entity.artists]: Artist,
+};
 
 @Injectable()
 export class SharedService {
   private readonly logger = new Logger(SharedService.name);
-  private DB = TempDB;
-  private FavsDB = FavoritesDB;
 
-  getCollectionByName(entity: Entity) {
-    return this.DB[entity];
-  }
-
-  getItemById(entity: Entity, id: string) {
-    const item = this.DB[entity].find((item) => item.id === id);
+  async getItemById(entity: Entity, id: string) {
+    const item = await dataSource.manager.findOneBy(EntityMap[entity], { id });
 
     if (!item)
       throw new HttpException(
@@ -35,39 +34,34 @@ export class SharedService {
     return item;
   }
 
-  addItem(entity: Entity, payload: ItemPayload) {
-    this.DB[entity].push(payload);
-  }
-
-  deleteItemById(entity: Entity, id: string): void {
-    this.getItemById(entity, id);
-
-    this.DB[entity] = this.DB[entity].filter((item) => item.id !== id);
-  }
-
-  cleanCollectionsAfterItemDeletion(
+  async cleanCollectionsAfterItemDeletion(
     delEntity: Entity,
     inEntity: Entity,
     id: string,
-  ): void {
-    this.DB[inEntity] = this.DB[inEntity].map((item) => {
-      if (item[InnerEntity[delEntity]] === id) {
-        return { ...item, [InnerEntity[delEntity]]: null };
-      }
-
-      return item;
-    });
-
-    this.cleanFavoritesAfterItemDeletion(delEntity, id);
-  }
-
-  cleanFavoritesAfterItemDeletion(entity: Entity, itemID: string): void {
-    const itemIdxInFavs = this.FavsDB[entity].findIndex(
-      (item: string) => item === itemID,
+  ): Promise<void> {
+    await dataSource.manager.update(
+      EntityMap[inEntity],
+      { [InnerEntity[delEntity]]: id },
+      { [InnerEntity[delEntity]]: null },
     );
 
-    if (itemIdxInFavs >= 0) {
-      this.FavsDB[entity].splice(itemIdxInFavs, 1);
-    }
+    await this.cleanFavoritesAfterItemDeletion(delEntity, id);
+  }
+
+  async cleanFavoritesAfterItemDeletion(
+    entity: Entity,
+    itemID: string,
+  ): Promise<void> {
+    const FavDB = await dataSource
+      .createQueryBuilder()
+      .select('favorites')
+      .from(Favorites, 'favorites')
+      .getOne();
+
+    const updatable = FavDB[entity].filter((favItemId) => favItemId !== itemID);
+
+    await dataSource.manager.update(Favorites, FavDB.id, {
+      [entity]: updatable,
+    });
   }
 }

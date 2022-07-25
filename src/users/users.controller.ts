@@ -25,20 +25,20 @@ export class UsersController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async getUsers(): Promise<User[]> {
-    return this.service.getUsers();
+    return await this.service.getUsers();
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   async getUserById(@Param() { id }: EntityID): Promise<User> {
-    return this.service.getUserById(id);
+    return await this.service.getUserById(id);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.service.addUser(createUserDto);
+    return await this.service.addUser(createUserDto);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -47,7 +47,7 @@ export class UsersController {
     @Param() { id }: EntityID,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ): Promise<User> {
-    return this.service.updateUserPassword(id, updatePasswordDto);
+    return await this.service.updateUserPassword(id, updatePasswordDto);
   }
 
   @Delete(':id')

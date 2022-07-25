@@ -1,4 +1,6 @@
+import { HttpException } from '@nestjs/common';
 import { Repository, DeepPartial } from 'typeorm';
+import { ResCode, ResMsg } from './constants/constants';
 
 export class CollectionItem<T> {
   protected repository: Repository<T>;
@@ -12,7 +14,12 @@ export class CollectionItem<T> {
   }
 
   async findOne<Option>(findOption: Option): Promise<T> {
-    return await this.repository.findOneBy(findOption);
+    const item = await this.repository.findOneBy(findOption);
+
+    if (!item)
+      throw new HttpException(`item ${ResMsg.notFound}`, ResCode.notFound);
+
+    return item;
   }
 
   async addItem(dto: DeepPartial<T>): Promise<T> {
@@ -26,14 +33,15 @@ export class CollectionItem<T> {
     findOption: Option,
     updateDto: UpdateDto,
   ): Promise<T> {
-    const item = this.repository.findOneBy(findOption);
+    await this.findOne(findOption);
 
     await this.repository.update(findOption, updateDto);
 
-    return await this.repository.findOneBy(findOption);
+    return await this.findOne(findOption);
   }
 
-  async deleteItem<Option>(findOption: Option): Promise<void> {
-    await this.repository.delete(findOption);
+  async deleteItem<Option>(delOption: Option): Promise<void> {
+    await this.findOne(delOption);
+    await this.repository.delete(delOption);
   }
 }

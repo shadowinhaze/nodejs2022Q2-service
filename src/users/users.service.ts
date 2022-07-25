@@ -12,11 +12,15 @@ export class UsersService {
   ) {}
 
   async getUsers(): Promise<User[]> {
-    return this.userRepository.find();
+    return await this.userRepository.find();
   }
 
   async getUserById(id: string): Promise<User> {
-    return this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOneBy({ id });
+
+    if (!user) throw new HttpException(UserResMsg.notFound, ResCode.notFound);
+
+    return user;
   }
 
   async addUser(createUserDto: CreateUserDto): Promise<User> {
@@ -29,7 +33,7 @@ export class UsersService {
     id: string,
     { oldPassword, newPassword }: UpdatePasswordDto,
   ): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.getUserById(id);
 
     if (user.password !== oldPassword)
       throw new HttpException(UserResMsg.oldPassWrong, ResCode.oldPassWrong);
@@ -38,10 +42,11 @@ export class UsersService {
       password: newPassword,
     });
 
-    return await this.userRepository.findOneBy({ id });
+    return await this.getUserById(id);
   }
 
   async deleteUser(id: string): Promise<void> {
+    await this.getUserById(id);
     await this.userRepository.delete({ id });
   }
 }

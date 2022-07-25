@@ -1,13 +1,14 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AlbumsService } from './albums.service';
 import { AlbumsController } from './albums.controller';
-import { SharedModule } from 'src/shared/shared.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { albumsProviders } from './albums.providers';
+import { SharedModule } from 'src/shared/shared.module';
+import { SharedService } from 'src/shared/shared.service';
 
 @Module({
-  imports: [SharedModule, DatabaseModule],
+  imports: [DatabaseModule, forwardRef(() => SharedModule)],
   controllers: [AlbumsController],
-  providers: [...albumsProviders, AlbumsService],
+  providers: [...albumsProviders, AlbumsService, SharedService],
 })
 export class AlbumsModule {}
