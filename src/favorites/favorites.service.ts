@@ -1,30 +1,92 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { FavsResMsg, ResCode } from 'src/shared/constants/constants';
+import {
+  forwardRef,
+  HttpException,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import { FavoritesResponse } from './favorites.dto';
+import { Repository } from 'typeorm';
+import { Favorites } from './favorites.entity';
 import { SharedService } from 'src/shared/shared.service';
-import { Entity, FavoritesDB } from 'src/temp-db';
-import { FavoritesResponse } from './schemas/favorites.dto';
+import { Entity } from 'src/temp-db';
+import { FavsResMsg, ResCode } from 'src/shared/constants/constants';
 
 @Injectable()
 export class FavoritesService {
-  private favsDB = FavoritesDB;
+  private readonly logger = new Logger();
+  constructor(
+    @Inject('FAVORITES_REPOSITORY')
+    private favoritesRepository: Repository<Favorites>,
+    private sharedService: SharedService,
+  ) {
+    this.check();
+  }
 
-  constructor(private readonly sharedService: SharedService) {}
+  private async check(): Promise<void> {
+    const check = await this.getDB();
 
-  getFavs(): FavoritesResponse {
-    const result = {};
+    if (check) return;
 
-    Object.entries(this.favsDB).forEach(([DBKey, DBArr]) => {
-      result[DBKey] = DBArr.map((itemID) => {
-        return this.sharedService.getItemById(DBKey as Entity, itemID);
-      });
-    });
+    const initial = this.favoritesRepository.create();
+    await this.favoritesRepository.save(initial);
+  }
+
+  private async getDB(): Promise<Favorites> {
+    return await this.favoritesRepository
+      .createQueryBuilder('favorites')
+      .select('favorites')
+      .getOne();
+  }
+
+  private async findFavoriteItemById(
+    db: Favorites,
+    entity: Entity,
+    id: string,
+  ): Promise<void> {
+    const searchItem = db[entity].find((item) => item === id);
+
+    if (!searchItem)
+      throw new HttpException(
+        `${entity.slice(0, -1)} ${FavsResMsg.notFavoriteEntity}`,
+        ResCode.notFound,
+      );
+  }
+
+  async getFavs(): Promise<FavoritesResponse> {
+    await this.check();
+
+    const result: FavoritesResponse = {
+      artists: [],
+      albums: [],
+      tracks: [],
+    };
+
+    const inDb = await this.getDB();
+
+    await Promise.all(
+      Object.entries(inDb).map(async ([DBKey, DBArr]) => {
+        if (DBKey === 'id') return;
+
+        result[DBKey] = await Promise.all(
+          DBArr.map(async (itemID) => {
+            return await this.sharedService.getItemById(
+              DBKey as Entity,
+              itemID,
+            );
+          }),
+        );
+      }),
+    );
 
     return result as FavoritesResponse;
   }
 
-  addItem(entity: Entity, id: string): void {
+  async addItem(entity: Entity, id: string): Promise<void> {
+    await this.check();
+
     try {
-      this.sharedService.getItemById(entity, id);
+      await this.sharedService.getItemById(entity, id);
     } catch (e) {
       if (e) {
         throw new HttpException(
@@ -34,27 +96,31 @@ export class FavoritesService {
       }
     }
 
-    if (this.favsDB[entity].includes(id))
+    const inDB = await this.getDB();
+
+    if (inDB[entity].includes(id))
       throw new HttpException(
         `${entity.slice(0, -1)} is already favorite`,
         ResCode.alreadyExist,
       );
 
-    this.favsDB[entity].push(id);
+    const updatedArray = [...inDB[entity], id];
+
+    await this.favoritesRepository.update(inDB.id, {
+      [entity]: updatedArray,
+    });
   }
 
-  deleteItem(entity: Entity, id: string): void {
-    this.findFavoriteItemById(entity, id);
-    this.favsDB[entity] = this.favsDB[entity].filter((itemId) => itemId !== id);
-  }
+  async deleteItem(entity: Entity, id: string): Promise<void> {
+    await this.check();
+    const inDB = await this.getDB();
 
-  private findFavoriteItemById(entity: Entity, id: string): void {
-    const searchItem = this.favsDB[entity].find((item) => item === id);
+    await this.findFavoriteItemById(inDB, entity, id);
 
-    if (!searchItem)
-      throw new HttpException(
-        `${entity.slice(0, -1)} ${FavsResMsg.notFavoriteEntity}`,
-        ResCode.notFound,
-      );
+    const updatedArray = inDB[entity].filter((itemId) => itemId !== id);
+
+    await this.favoritesRepository.update(inDB.id, {
+      [entity]: updatedArray,
+    });
   }
 }

@@ -3,24 +3,24 @@ import { ApiPath, ResCode } from 'src/shared/constants/constants';
 import { FavsEntity } from 'src/shared/types/entity-id';
 import { Entity } from 'src/temp-db';
 import { FavoritesService } from './favorites.service';
-import { FavoritesResponse } from './schemas/favorites.dto';
+import { FavoritesResponse } from './favorites.dto';
 
 @Controller(ApiPath.favorites)
 export class FavoritesController {
   constructor(private readonly service: FavoritesService) {}
 
   @Get()
-  getFavs(): FavoritesResponse {
-    return this.service.getFavs();
+  async getFavs(): Promise<FavoritesResponse> {
+    return await this.service.getFavs();
   }
 
   @Post(':entity/:id')
   @HttpCode(ResCode.createdSuccess)
-  addItem(@Param() { entity, id }: FavsEntity): {
+  async addItem(@Param() { entity, id }: FavsEntity): Promise<{
     statusCode: number;
     message: string;
-  } {
-    this.service.addItem(Entity[`${entity}s`], id);
+  }> {
+    await this.service.addItem(Entity[`${entity}s`], id);
     return {
       statusCode: ResCode.createdSuccess,
       message: `${entity} with id: ${id} successfully added to favorites`,
