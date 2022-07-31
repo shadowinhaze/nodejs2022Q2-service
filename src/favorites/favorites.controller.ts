@@ -1,16 +1,27 @@
-import { Controller, Delete, Get, HttpCode, Param, Post } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiPath, ResCode } from 'src/shared/constants/constants';
 import { FavsEntity } from 'src/shared/types/entity-id';
 import { Entity } from 'src/temp-db';
 import { FavoritesService } from './favorites.service';
 import { FavoritesResponse } from './favorites.dto';
+import { Favorites } from './favorites.entity';
 
 @Controller(ApiPath.favorites)
 export class FavoritesController {
   constructor(private readonly service: FavoritesService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  async getFavs(): Promise<FavoritesResponse> {
+  async getFavs(): Promise<Favorites> {
     return await this.service.getFavs();
   }
 

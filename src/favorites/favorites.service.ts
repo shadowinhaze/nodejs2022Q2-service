@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  HttpException,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { FavoritesResponse } from './favorites.dto';
+import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Favorites } from './favorites.entity';
 import { SharedService } from 'src/shared/shared.service';
@@ -24,7 +17,7 @@ export class FavoritesService {
   }
 
   private async check(): Promise<void> {
-    const check = await this.getDB();
+    const check = await this.getFavs();
 
     if (check) return;
 
@@ -32,19 +25,24 @@ export class FavoritesService {
     await this.favoritesRepository.save(initial);
   }
 
-  private async getDB(): Promise<Favorites> {
-    return await this.favoritesRepository
-      .createQueryBuilder('favorites')
-      .select('favorites')
-      .getOne();
+  async getFavs() {
+    return (
+      await this.favoritesRepository.find({
+        relations: {
+          artists: true,
+          albums: true,
+          tracks: true,
+        },
+      })
+    )[0];
   }
 
   private async findFavoriteItemById(
     db: Favorites,
     entity: Entity,
-    id: string,
+    searchId: string,
   ): Promise<void> {
-    const searchItem = db[entity].find((item) => item === id);
+    const searchItem = db[entity].find(({ id }) => id === searchId);
 
     if (!searchItem)
       throw new HttpException(
@@ -53,40 +51,9 @@ export class FavoritesService {
       );
   }
 
-  async getFavs(): Promise<FavoritesResponse> {
-    await this.check();
-
-    const result: FavoritesResponse = {
-      artists: [],
-      albums: [],
-      tracks: [],
-    };
-
-    const inDb = await this.getDB();
-
-    await Promise.all(
-      Object.entries(inDb).map(async ([DBKey, DBArr]) => {
-        if (DBKey === 'id') return;
-
-        result[DBKey] = await Promise.all(
-          DBArr.map(async (itemID) => {
-            return await this.sharedService.getItemById(
-              DBKey as Entity,
-              itemID,
-            );
-          }),
-        );
-      }),
-    );
-
-    return result as FavoritesResponse;
-  }
-
-  async addItem(entity: Entity, id: string): Promise<void> {
-    await this.check();
-
+  async addItem(entity: Entity, addedID: string): Promise<void> {
     try {
-      await this.sharedService.getItemById(entity, id);
+      await this.sharedService.getItemById(entity, addedID);
     } catch (e) {
       if (e) {
         throw new HttpException(
@@ -96,31 +63,28 @@ export class FavoritesService {
       }
     }
 
-    const inDB = await this.getDB();
+    const inDB = await this.getFavs();
 
-    if (inDB[entity].includes(id))
+    const addibleItem = await this.sharedService.getItemById(entity, addedID);
+
+    if (inDB[entity].some(({ id }) => id === addedID))
       throw new HttpException(
         `${entity.slice(0, -1)} is already favorite`,
         ResCode.alreadyExist,
       );
 
-    const updatedArray = [...inDB[entity], id];
+    inDB[entity] = [...inDB[entity], addibleItem];
 
-    await this.favoritesRepository.update(inDB.id, {
-      [entity]: updatedArray,
-    });
+    await this.favoritesRepository.save(inDB);
   }
 
-  async deleteItem(entity: Entity, id: string): Promise<void> {
-    await this.check();
-    const inDB = await this.getDB();
+  async deleteItem(entity: Entity, deletedId: string): Promise<void> {
+    const inDB = await this.getFavs();
 
-    await this.findFavoriteItemById(inDB, entity, id);
+    await this.findFavoriteItemById(inDB, entity, deletedId);
 
-    const updatedArray = inDB[entity].filter((itemId) => itemId !== id);
+    inDB[entity] = inDB[entity].filter(({ id }) => id !== deletedId);
 
-    await this.favoritesRepository.update(inDB.id, {
-      [entity]: updatedArray,
-    });
+    await this.favoritesRepository.save(inDB);
   }
 }

@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Artist } from 'src/artists/artist.entity';
+import { Favorites } from 'src/favorites/favorites.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity('albums')
 export class Album {
@@ -11,6 +13,18 @@ export class Album {
   @Column('int')
   year!: number;
 
-  @Column({ type: 'uuid', nullable: true })
-  artistId: string | null;
+  @ManyToOne(() => Artist, (artist: Artist) => artist.id, {
+    nullable: true,
+    onDelete: 'SET NULL',
+    cascade: ['insert', 'update', 'remove'],
+  })
+  artist: string;
+
+  @Column({ nullable: true })
+  artistId: string;
+
+  @ManyToOne(() => Favorites, (favorites: Favorites) => favorites.albums, {
+    onDelete: 'CASCADE',
+  })
+  favorites: Favorites;
 }
