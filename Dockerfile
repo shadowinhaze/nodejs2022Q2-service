@@ -9,4 +9,4 @@ FROM node:lts-alpine
 WORKDIR /app
 COPY --from=builder /app ./
 EXPOSE ${API_PORT}
-CMD ['npm', 'run', 'start:dev']
+CMD ["npm", "run", "start:dev"]

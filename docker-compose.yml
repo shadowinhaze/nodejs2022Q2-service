@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    container_name: postgres-db
+    container_name: ${DOCKER_DB_CONTAINER_NAME}
     image: postgres:14.4-alpine
     env_file:
       - .env
@@ -18,7 +18,7 @@ services:
     networks:
       - app-network
   web-api:
-    container_name: backend-music-service
+    container_name: ${DOCKER_APP_CONTAINER_NAME}
     build:
       context: .
       dockerfile: ./Dockerfile
