@@ -1,9 +1,22 @@
 import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Favorites } from './favorites.entity';
-import { SharedService } from 'src/shared/shared.service';
-import { Entity } from 'src/temp-db';
-import { FavsResMsg, ResCode } from 'src/shared/constants/constants';
+import {
+  Entity,
+  FavsResMsg,
+  ResCode,
+  ResMsg,
+} from 'src/shared/constants/constants';
+import { dataSource } from 'src/database/data-source';
+import { Album } from 'src/albums/album.entity';
+import { Artist } from 'src/artists/artist.entity';
+import { Track } from 'src/tracks/track.entity';
+
+const EntityMap = {
+  [Entity.tracks]: Track,
+  [Entity.albums]: Album,
+  [Entity.artists]: Artist,
+};
 
 @Injectable()
 export class FavoritesService {
@@ -11,7 +24,6 @@ export class FavoritesService {
   constructor(
     @Inject('FAVORITES_REPOSITORY')
     private favoritesRepository: Repository<Favorites>,
-    private sharedService: SharedService,
   ) {
     this.check();
   }
@@ -51,9 +63,21 @@ export class FavoritesService {
       );
   }
 
+  private async getItemById(entity: Entity, id: string) {
+    const item = await dataSource.manager.findOneBy(EntityMap[entity], { id });
+
+    if (!item)
+      throw new HttpException(
+        `${entity.slice(0, -1)} ${ResMsg.notFound}`,
+        ResCode.notFound,
+      );
+
+    return item;
+  }
+
   async addItem(entity: Entity, addedID: string): Promise<void> {
     try {
-      await this.sharedService.getItemById(entity, addedID);
+      await this.getItemById(entity, addedID);
     } catch (e) {
       if (e) {
         throw new HttpException(
@@ -65,7 +89,7 @@ export class FavoritesService {
 
     const inDB = await this.getFavs();
 
-    const addibleItem = await this.sharedService.getItemById(entity, addedID);
+    const addibleItem = await this.getItemById(entity, addedID);
 
     if (inDB[entity].some(({ id }) => id === addedID))
       throw new HttpException(

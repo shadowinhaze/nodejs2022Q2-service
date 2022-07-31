@@ -24,19 +24,15 @@ export enum UserResMsg {
   oldPassWrong = 'Your current (old password) is wrong',
 }
 
-export enum TrackResMsg {
-  notFound = 'Track with provided ID does not exist',
-}
-
-export enum ArtistResMsg {
-  notFound = 'Artist with provided ID does not exist',
-}
-
-export enum AlbumResMsg {
-  notFound = 'Album with provided ID does not exist',
-}
-
 export enum FavsResMsg {
   notFound = 'with provided ID does not exist in collection',
   notFavoriteEntity = "with provided ID isn't favorite",
+}
+
+export enum Entity {
+  artists = 'artists',
+  albums = 'albums',
+  tracks = 'tracks',
+  favorites = 'favorites',
+  users = 'users',
 }
