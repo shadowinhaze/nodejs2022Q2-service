@@ -1,15 +1,47 @@
-version: '1.0'
+version: '3.8'
 
 services:
   db:
     container_name: postgres-db
     image: postgres:14.4-alpine
-    restart: always
+    env_file:
+      - .env
     environment:
-      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DATABASE}
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    restart: always
+    networks:
+      - app-network
+  web-api:
+    container_name: backend-music-service
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    environment:
+      - API_PORT=${PORT}
+    depends_on:
+      - db
+    restart: always
+    command: sh -c "npx typeorm migration:run -d ./dist/database/data-source.js && npm run start:dev"
+    networks:
+      - app-network
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - ${PORT}:${PORT}
+networks:
+  app-network:
+    name: custom-network
+    driver: bridge
+
+volumes:
+  postgres_data:
+  postgres_logs:
