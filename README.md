@@ -23,6 +23,26 @@ npm install
 .env.example to .env
 ```
 
+## Run database
+
+install docker if you havn't had it yet
+
+```
+docker-compose up
+```
+
+at the root directory, DB instance will start.
+
+## Run migrations
+
+```
+npm run migration:run
+```
+
+## Check environment
+
+POSTGRES_HOST must be set as **localhost**
+
 ## Running application
 
 ```
