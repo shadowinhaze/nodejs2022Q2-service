@@ -23,6 +23,10 @@ npm install
 .env.example to .env
 ```
 
+## Check environment
+
+POSTGRES_HOST must be set as **db**
+
 ## Running application
 
 ```
