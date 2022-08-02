@@ -8,7 +8,7 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/shadowinhaze/nodejs2022Q2-service.git
 ```
 
 ## Installing NPM modules
@@ -17,15 +17,38 @@ git clone {repository URL}
 npm install
 ```
 
-## Running application
+## Rename ENV file
 
 ```
-npm start
+.env.example to .env
+```
+
+## Check environment
+
+POSTGRES_HOST must be set as **db**
+
+## Running application
+
+run from docker
+
+```
+//it's bug, please before docker
+npm run build
+
+docker-compose up --build
 ```
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+## Docker scan
+
+For scan service by docker inbox util use:
+
+```
+npm run ds:app
+```
 
 ## Testing
 
