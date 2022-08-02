@@ -25,13 +25,13 @@ npm install
 
 ## Run database
 
-install docker if you havn't had it yet
+install docker if you haven't had it yet
 
 ```
 docker-compose up
 ```
 
-at the root directory, DB instance will start.
+at the root directory,then DB instance will start.
 
 ## Run migrations
 
