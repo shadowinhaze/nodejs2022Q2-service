@@ -29,13 +29,12 @@ POSTGRES_HOST must be set as **db**
 
 ## Running application
 
-```
-npm start
-```
-
-or you can run from docker
+run from docker
 
 ```
+//it's bug, please before docker
+npm run build
+
 docker-compose up --build
 ```
 
