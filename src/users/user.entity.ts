@@ -30,4 +30,10 @@ export class User {
   @UpdateDateColumn({ type: 'timestamp' })
   @Transform(({ value }) => new Date(value).getTime())
   updatedAt!: Date;
+
+  @Column({
+    nullable: true,
+  })
+  @Exclude()
+  public currentJRT?: string;
 }
