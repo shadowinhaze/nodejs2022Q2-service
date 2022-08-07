@@ -6,11 +6,20 @@ import { ValidationPipe } from '@nestjs/common';
 import { dirname, join } from 'path';
 import { readFile } from 'fs/promises';
 import { parse } from 'yaml';
+import { LoggingService } from './logging/logging.service';
+import { CustomFilter } from './logging/custom.filter';
 
 const port = process.env.PORT || 5000;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+
+  const log = app.get(LoggingService);
+  log.setLogLvl(Number(process.env.NEST_LOG_LEVEL));
+  app.useLogger(log);
+  app.useGlobalFilters(new CustomFilter(log));
 
   app.useGlobalPipes(new ValidationPipe());
 
@@ -23,6 +32,8 @@ async function bootstrap() {
   await app.listen(port, () => {
     console.log(`Server started on ${port} port.`);
   });
+
+  throw new Error('Please write me');
 }
 
 bootstrap();

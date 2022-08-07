@@ -11,6 +11,7 @@ import { typeOrmAsyncConfig } from './database/typeorm.config';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { LoggingModule } from './logging/logging.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { APP_GUARD } from '@nestjs/core';
     FavoritesModule,
     DatabaseModule,
     AuthModule,
+    LoggingModule,
   ],
   providers: [
     {
