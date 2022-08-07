@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { LoggingMiddleware } from './logging.midlware';
+import { LoggingMiddleware } from './logging.middleware';
 import { LoggingService } from './logging.service';
 
 @Module({
