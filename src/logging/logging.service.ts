@@ -56,14 +56,14 @@ export class LoggingService extends ConsoleLogger {
   async error(message: string | object, stack?: string) {
     if (typeof message === 'string') {
       console.log(`\x1b[31m${message}\n${stack}\x1b[0m`);
-      // await this.writeToFile(message, 'error');
+      await this.writeToFile(message, 'error');
     } else {
       super.error(message, stack);
     }
   }
 
   async log(message: any, ...rest): Promise<void> {
-    await this.writeToFile(message, 'def');
+    // await this.writeToFile(message, 'def');
     super.log(message, ...rest);
   }
 }
