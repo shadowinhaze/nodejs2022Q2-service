@@ -33,7 +33,7 @@ async function bootstrap() {
     console.log(`Server started on ${port} port.`);
   });
 
-  throw new Error('Please write me');
+  // throw new Error('Please write me');
 }
 
 bootstrap();
