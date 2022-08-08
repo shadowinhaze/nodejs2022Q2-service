@@ -8,7 +8,7 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/shadowinhaze/nodejs2022Q2-service.git
 ```
 
 ## Installing NPM modules
@@ -16,6 +16,32 @@ git clone {repository URL}
 ```
 npm install
 ```
+
+## Rename ENV file
+
+```
+.env.example to .env
+```
+
+## Run database
+
+install docker if you haven't had it yet
+
+```
+docker-compose up
+```
+
+at the root directory,then DB instance will start.
+
+## Run migrations
+
+```
+npm run migration:run
+```
+
+## Check environment
+
+POSTGRES_HOST must be set as **localhost**
 
 ## Running application
 
